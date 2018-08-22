@@ -1,0 +1,48 @@
+object Host "$CLIENT" {
+  import "generic-host"
+
+  address = "$IP_CLI"
+
+  vars.os = "Linux"
+
+  vars.notification["mail"] = {
+
+    groups = [ "icingaadmins" ]
+  }
+}
+
+object Service "ping4" {
+  host_name = "$CLIENT"
+  check_command = "ping4"
+}
+
+object Service "http" {
+        import "satellite-service"
+        check_command = "http"
+        event_command = "event_by_ssh_restart_odoo"
+        host_name = "$CLIENT"
+        vars.http_vhost = "$CLIENT.sdicloud.es"
+        vars.http_port = 443
+        vars.http_ssl = true
+
+}
+object Service "icinga" {
+        import "satellite-service"
+        check_command = "dummy"
+        host_name = "$CLIENT"
+}
+
+object Service "load" {
+        import "satellite-service"
+        check_command = "dummy"
+        host_name = "$CLIENT"
+}
+
+object Service "users" {
+        import "satellite-service"
+        check_command = "dummy"
+        host_name = "$CLIENT"
+}
+
+
+
